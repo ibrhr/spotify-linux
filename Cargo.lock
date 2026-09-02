@@ -1642,9 +1642,12 @@ dependencies = [
  "headers",
  "http",
  "hyper",
+ "hyper-tls",
  "hyper-util",
+ "native-tls",
  "pin-project-lite",
  "tokio",
+ "tokio-native-tls",
  "tower-service",
 ]
 
@@ -2139,6 +2142,7 @@ dependencies = [
  "httparse",
  "hyper",
  "hyper-proxy2",
+ "hyper-tls",
  "hyper-util",
  "librespot-oauth",
  "librespot-protocol",
@@ -4149,7 +4153,9 @@ checksum = "d25a406cddcc431a75d3d9afc6a7c0f7428d4891dd973e4d54c56b46127bf857"
 dependencies = [
  "futures-util",
  "log",
+ "native-tls",
  "tokio",
+ "tokio-native-tls",
  "tungstenite",
 ]
 
@@ -4368,8 +4374,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8628dcc84e5a09eb3d8423d6cb682965dea9133204e8fb3efee74c2a0c259442"
 dependencies = [
  "bytes",
+ "data-encoding",
+ "http",
+ "httparse",
  "log",
+ "native-tls",
  "rand 0.9.5",
+ "sha1",
  "thiserror 2.0.20",
  "utf-8",
 ]
