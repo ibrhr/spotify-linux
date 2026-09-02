@@ -59,3 +59,38 @@ pub async fn ensure_session() -> Result<(), AuthError> {
     }
     todo!("PKCE flow + keyring storage")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn redirect_uri_is_loopback_not_localhost() {
+        // Spotify rejects `localhost`; the URI must use 127.0.0.1.
+        let uri = redirect_uri();
+        assert!(uri.starts_with("http://127.0.0.1:"), "got {uri}");
+        assert!(!uri.contains("localhost"), "got {uri}");
+        assert!(uri.ends_with("/login"), "got {uri}");
+    }
+
+    #[test]
+    fn scopes_are_unique_and_nonempty() {
+        assert!(!SCOPES.is_empty());
+        let mut seen = SCOPES.to_vec();
+        seen.sort_unstable();
+        seen.dedup();
+        assert_eq!(seen.len(), SCOPES.len(), "duplicate scopes in SCOPES");
+    }
+
+    #[tokio::test]
+    async fn missing_client_id_maps_to_missing_client_id_error() {
+        // Only assert when the var is absent: the user's environment may set
+        // it, in which case ensure_session would proceed to its todo!().
+        if std::env::var_os("SPOTIFY_CLIENT_ID").is_none() {
+            assert!(matches!(
+                ensure_session().await,
+                Err(AuthError::MissingClientId)
+            ));
+        }
+    }
+}

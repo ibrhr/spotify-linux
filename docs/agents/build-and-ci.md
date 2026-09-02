@@ -26,6 +26,10 @@ CI always passes `--locked`. If you change `Cargo.toml`, commit the updated `Car
 
 `pre-commit install --install-hooks` enables them. On commit: fmt + clippy + hygiene checks. On push: `cargo test --workspace --locked`. Note pre-commit runs clippy with default features only — the CI-exact command above is what you must run yourself.
 
+## CI test runner
+
+The `test` job installs `xvfb` + `cargo-nextest` and runs `xvfb-run -a cargo nextest run --workspace --all-features --locked` (GTK4 needs a display; nextest gives each test its own process and a fresh `gtk::init()`). See `docs/agents/testing.md`.
+
 ## Releases
 
 Tag-driven (`.github/workflows/release.yml`): pushing a `v*` tag builds `--release --all-features --locked` and publishes a GitHub release with a tarball + sha256. No manual release steps.

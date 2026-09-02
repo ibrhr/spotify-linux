@@ -1,21 +1,11 @@
 //! spotify-linux -- a Linux-native Spotify client.
 //!
 //! Entry point: initializes logging, ensures app directories exist,
-//! and hands off to the root Relm4 component ([`app::App`]).
-
-// Scaffold phase: module APIs are defined ahead of their call sites.
-// TODO: remove once auth/playback/API layers are wired into the UI.
-#![allow(dead_code)]
-
-mod api;
-mod app;
-mod auth;
-mod config;
-mod models;
-mod mpris;
-mod player;
+//! and hands off to the root Relm4 component ([`spotify_linux::app::App`]).
 
 use relm4::RelmApp;
+
+use spotify_linux::{app, config};
 
 fn main() {
     // Logging: honors RUST_LOG (e.g. RUST_LOG=debug cargo run).

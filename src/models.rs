@@ -82,3 +82,52 @@ pub enum RepeatMode {
     Track,
     Context,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn track(artists: &[&str]) -> Track {
+        Track {
+            id: "abc123".into(),
+            uri: "spotify:track:abc123".into(),
+            title: "Song".into(),
+            artists: artists
+                .iter()
+                .map(|name| Artist {
+                    id: format!("id-{name}"),
+                    name: (*name).to_string(),
+                })
+                .collect(),
+            album: None,
+            duration_ms: 200_000,
+        }
+    }
+
+    #[test]
+    fn artist_names_empty() {
+        assert_eq!(track(&[]).artist_names(), "");
+    }
+
+    #[test]
+    fn artist_names_single() {
+        assert_eq!(track(&["A"]).artist_names(), "A");
+    }
+
+    #[test]
+    fn artist_names_two() {
+        assert_eq!(track(&["A", "B"]).artist_names(), "A, B");
+    }
+
+    #[test]
+    fn artist_names_many() {
+        // Two-plus artists render as "first, rest joined by commas".
+        assert_eq!(track(&["A", "B", "C", "D"]).artist_names(), "A, B, C, D");
+    }
+
+    #[test]
+    fn repeat_mode_defaults_to_off() {
+        assert_eq!(RepeatMode::default(), RepeatMode::Off);
+        assert_eq!(NowPlaying::default().repeat, RepeatMode::Off);
+    }
+}

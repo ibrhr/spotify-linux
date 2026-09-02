@@ -1,0 +1,7 @@
+# Clippy configuration. The project denies unwrap_used/expect_used globally
+# (see [lints.clippy] in Cargo.toml), but tests legitimately use them.
+# (TOML booleans are top-level keys in clippy.toml.)
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+allow-print-in-tests = true

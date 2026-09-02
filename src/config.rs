@@ -37,7 +37,49 @@ pub fn init_dirs() -> anyhow::Result<()> {
 /// Register an app at <https://developer.spotify.com/dashboard> and export
 /// `SPOTIFY_CLIENT_ID`. (No client secret needed: we use the PKCE flow.)
 pub fn client_id() -> Option<String> {
-    std::env::var("SPOTIFY_CLIENT_ID")
-        .ok()
-        .filter(|s| !s.trim().is_empty())
+    normalize_client_id(std::env::var("SPOTIFY_CLIENT_ID").ok())
+}
+
+/// Pure logic behind [`client_id`], split out so tests don't need to mutate
+/// the environment (`unsafe_code` is forbidden crate-wide, and Rust 2024
+/// made env mutation unsafe anyway).
+fn normalize_client_id(raw: Option<String>) -> Option<String> {
+    raw.filter(|s| !s.trim().is_empty())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn app_dirs_live_under_spotify_linux() {
+        let data = data_dir().unwrap();
+        let cache = cache_dir().unwrap();
+        assert!(
+            data.ends_with("spotify-linux"),
+            "unexpected data dir: {data:?}"
+        );
+        assert!(
+            cache.ends_with("spotify-linux"),
+            "unexpected cache dir: {cache:?}"
+        );
+    }
+
+    #[test]
+    fn redirect_port_matches_documented_redirect_uri() {
+        // The dashboard must register exactly this URI; keep in sync with README.
+        assert_eq!(OAUTH_REDIRECT_PORT, 8899);
+        assert_eq!(crate::auth::redirect_uri(), "http://127.0.0.1:8899/login");
+    }
+
+    #[test]
+    fn client_id_rejects_blank_and_missing() {
+        assert_eq!(
+            normalize_client_id(Some("abc".into())).as_deref(),
+            Some("abc")
+        );
+        assert_eq!(normalize_client_id(Some("   ".into())), None);
+        assert_eq!(normalize_client_id(Some("".into())), None);
+        assert_eq!(normalize_client_id(None), None);
+    }
 }
