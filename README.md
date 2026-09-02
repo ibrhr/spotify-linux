@@ -1,6 +1,6 @@
 # spotify-linux
 
-A Linux-native Spotify client, built for my taste rather than Spotify's design language.
+A Linux-native Spotify client
 
 **Status: scaffold.** The architecture is in place and it compiles; features come next. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
