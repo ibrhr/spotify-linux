@@ -29,6 +29,7 @@ rspotify = "0.16"
 # Optional: see the `playback` feature. This is how we actually play audio.
 librespot = { version = "0.8", optional = true, default-features = false, features = [
     "rodio-backend",
+    "native-tls",
 ] }
 
 # --- Async runtime ---
