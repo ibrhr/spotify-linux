@@ -1,0 +1,45 @@
+# pre-commit: https://pre-commit.com
+# Install once with:  pre-commit install --install-hooks
+# Run manually with:  pre-commit run --all-files
+default_install_hook_types: [pre-commit, pre-push]
+
+repos:
+  # Generic repository hygiene.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: check-added-large-files
+
+  # Rust: format, lint, and (on push) test via the local toolchain.
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt --all
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: cargo clippy
+        # Default features only locally; CI covers --all-features (needs ALSA dev libs).
+        entry: cargo clippy --workspace --all-targets --locked -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-test
+        name: cargo test
+        entry: cargo test --workspace --locked
+        language: system
+        types: [rust]
+        pass_filenames: false
+        stages: [pre-push]

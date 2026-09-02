@@ -1,0 +1,43 @@
+# cargo-deny: https://embarkstudios.github.io/cargo-deny/
+# CI runs `cargo deny --all-features check` on every push/PR.
+
+[advisories]
+version = 2
+yanked = "deny"
+# Both are transitive deps of librespot that cannot be fixed from here:
+# - quick-xml: fix requires >= 0.41; librespot-core pins the 0.38 line.
+# - rsa: timing side channel, no upstream patch exists yet (librespot login).
+# Revisit on each librespot release.
+ignore = [
+  { id = "RUSTSEC-2026-0194", reason = "quick-xml >= 0.41 blocked by librespot-core's version pin" },
+  { id = "RUSTSEC-2026-0195", reason = "quick-xml >= 0.41 blocked by librespot-core's version pin" },
+  { id = "RUSTSEC-2023-0071", reason = "no patched rsa release exists; unfixable until librespot migrates" },
+]
+
+[licenses]
+version = 2
+# Everything this project and its dependency tree ship under.
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Unicode-DFS-2016",
+  "Zlib",
+  "CC0-1.0",
+  "MPL-2.0",
+  "OpenSSL",
+  "CDLA-Permissive-2.0",
+]
+confidence-threshold = 0.8
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

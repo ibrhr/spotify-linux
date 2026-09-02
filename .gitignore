@@ -1,0 +1,8 @@
+# Rust
+/target
+
+# Editors & OS noise
+.idea/
+.vscode/
+*.swp
+.DS_Store

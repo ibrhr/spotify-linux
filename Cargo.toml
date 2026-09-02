@@ -1,0 +1,69 @@
+[package]
+name = "spotify-linux"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "A Linux-native Spotify client built for my taste"
+license = "MIT"
+repository = "https://github.com/ibrhr/spotify-linux"
+readme = "README.md"
+
+[features]
+default = []
+# Local playback via librespot (Spotify Connect). Requires system audio dev
+# libraries: alsa-lib-devel (Fedora) / libasound2-dev (Debian/Ubuntu).
+playback = ["dep:librespot"]
+
+[dependencies]
+# --- UI ---
+gtk = { version = "0.11.4", package = "gtk4", features = ["v4_12"] }
+relm4 = { version = "0.11", features = ["libadwaita", "gnome_45"] }
+relm4-components = "0.11"
+
+# --- Spotify ---
+# Web API client: metadata, library, playlists, search, profile.
+# Requires a registered app (client id) at developer.spotify.com/dashboard.
+# Default TLS (system OpenSSL) keeps the dependency and license tree simple.
+rspotify = "0.16"
+# Direct Spotify streaming / Spotify Connect endpoint (Premium accounts only).
+# Optional: see the `playback` feature. This is how we actually play audio.
+librespot = { version = "0.8", optional = true, default-features = false, features = [
+    "rodio-backend",
+] }
+
+# --- Async runtime ---
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+
+# --- Desktop integration ---
+# MPRIS D-Bus interface so media keys / GNOME media controls work.
+mpris-server = "0.10"
+
+# --- Persistence & secrets ---
+# Refresh token storage in the system keyring (GNOME Keyring / KWallet).
+# zbus-based Secret Service backend: pure Rust, no libdbus dev dependency.
+keyring = { version = "3", features = ["async-secret-service", "tokio", "crypto-rust"] }
+dirs = "6"
+
+# --- Errors, logging, serialization ---
+anyhow = "1"
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[lints.rust]
+unsafe_code = "forbid"
+future_incompatible = { level = "warn", priority = -1 }
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+# Deny the classic footguns outright; CI runs clippy with `-D warnings`.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+dbg_macro = "deny"
+# This is a GUI app: no stdout/stderr spam.
+print_stdout = "deny"
+print_stderr = "deny"
