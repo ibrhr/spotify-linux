@@ -43,7 +43,7 @@ mpris-server = "0.10"
 # Refresh token storage in the system keyring (GNOME Keyring / KWallet).
 # zbus-based Secret Service backend: pure Rust, no libdbus dev dependency.
 keyring = { version = "3", features = ["async-secret-service", "tokio", "crypto-rust"] }
-dirs = "6"
+dirs = "7"
 
 # --- Errors, logging, serialization ---
 anyhow = "1"
